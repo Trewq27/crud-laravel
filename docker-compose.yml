@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  # Apache with PHP 8.2 Service
+  app:
+    image: php:8.2-apache
+    volumes:
+      - ./:/var/www/html
+      - ./sites_available:/etc/apache2/sites-available
+    ports:
+      - "8000:80"
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html/public
+    networks:
+      - laravel
+
+  # MariaDB Service
+  db:
+    image: mariadb:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: project_app_db
+      MYSQL_USER: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - laravel
+
+  # Redis Service
+  redis:
+    image: redis:alpine
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  dbdata:
